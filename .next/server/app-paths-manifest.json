@@ -1,0 +1,9 @@
+{
+  "/ai-configurator/page": "app/ai-configurator/page.js",
+  "/benchmarking/page": "app/benchmarking/page.js",
+  "/favicon.ico/route": "app/favicon.ico/route.js",
+  "/opensearch/page": "app/opensearch/page.js",
+  "/page": "app/page.js",
+  "/pipelines/page": "app/pipelines/page.js",
+  "/rag-builder/page": "app/rag-builder/page.js"
+}

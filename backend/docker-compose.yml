@@ -1,0 +1,138 @@
+version: '3.8'
+
+services:
+  # PostgreSQL 데이터베이스 서비스
+  postgres:
+    image: postgres:16-alpine
+    container_name: ragpilot-postgres
+    environment:
+      POSTGRES_USER: ragpilot
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: ragpilot
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - ragpilot-network
+
+  # Redis 캐시 및 메시지 브로커
+  redis:
+    image: redis:7-alpine
+    container_name: ragpilot-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - ragpilot-network
+
+  # OpenSearch 클러스터
+  opensearch:
+    image: opensearchproject/opensearch:2.11.0
+    container_name: ragpilot-opensearch
+    environment:
+      - cluster.name=ragpilot-cluster
+      - node.name=ragpilot-node
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "DISABLE_SECURITY_PLUGIN=true"  # 개발 환경용
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - opensearch_data:/usr/share/opensearch/data
+    ports:
+      - "9200:9200"
+      - "9600:9600"
+    networks:
+      - ragpilot-network
+
+  # OpenSearch 대시보드
+  opensearch-dashboards:
+    image: opensearchproject/opensearch-dashboards:2.11.0
+    container_name: ragpilot-opensearch-dashboards
+    ports:
+      - "5601:5601"
+    environment:
+      - OPENSEARCH_HOSTS=http://opensearch:9200
+      - "DISABLE_SECURITY_DASHBOARDS_PLUGIN=true"  # 개발 환경용
+    networks:
+      - ragpilot-network
+    depends_on:
+      - opensearch
+
+  # FastAPI 백엔드 서비스
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ragpilot-backend
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://ragpilot:password@postgres:5432/ragpilot
+      - REDIS_URL=redis://redis:6379/0
+      - OPENSEARCH_HOST=opensearch
+      - OPENSEARCH_PORT=9200
+    volumes:
+      - ./app:/app/app
+      - ./uploads:/app/uploads
+    depends_on:
+      - postgres
+      - redis
+      - opensearch
+    networks:
+      - ragpilot-network
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+
+  # Celery 워커 서비스
+  celery-worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ragpilot-celery-worker
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://ragpilot:password@postgres:5432/ragpilot
+      - REDIS_URL=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://redis:6379/1
+      - OPENSEARCH_HOST=opensearch
+    volumes:
+      - ./app:/app/app
+    depends_on:
+      - postgres
+      - redis
+      - opensearch
+    networks:
+      - ragpilot-network
+    command: celery -A app.core.celery_app worker --loglevel=info
+
+  # Celery Beat 스케줄러
+  celery-beat:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ragpilot-celery-beat
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://ragpilot:password@postgres:5432/ragpilot
+      - REDIS_URL=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://redis:6379/1
+    volumes:
+      - ./app:/app/app
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - ragpilot-network
+    command: celery -A app.core.celery_app beat --loglevel=info
+
+networks:
+  ragpilot-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  redis_data:
+  opensearch_data:
