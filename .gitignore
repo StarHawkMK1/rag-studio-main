@@ -75,3 +75,4 @@ docker-compose.override.yaml
 .temp/
 temp/
 tmp/
+backend/.env
