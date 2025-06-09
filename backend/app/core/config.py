@@ -23,7 +23,7 @@ class Settings(BaseSettings):
     """
     
     # 애플리케이션 기본 설정
-    APP_NAME: str = Field(default="RAGPilot", description="애플리케이션 이름")
+    APP_NAME: str = Field(default="RAGStudio", description="애플리케이션 이름")
     APP_VERSION: str = Field(default="1.0.0", description="애플리케이션 버전")
     DEBUG: bool = Field(default=False, description="디버그 모드 활성화 여부")
     LOG_LEVEL: str = Field(default="INFO", description="로깅 레벨")
@@ -41,7 +41,7 @@ class Settings(BaseSettings):
     
     # 데이터베이스 설정
     DATABASE_URL: str = Field(
-        default="postgresql+asyncpg://ragpilot:password@localhost:5432/ragpilot",
+        default="postgresql+asyncpg://ragstudio:password@localhost:5432/ragstudio",
         description="PostgreSQL 연결 URL"
     )
     DATABASE_ECHO: bool = Field(default=False, description="SQL 쿼리 로깅 여부")
@@ -173,7 +173,7 @@ class Settings(BaseSettings):
         # 필드 설명을 스키마에 포함
         json_schema_extra = {
             "example": {
-                "APP_NAME": "RAGPilot",
+                "APP_NAME": "RAGStudio",
                 "DEBUG": True,
                 "DATABASE_URL": "postgresql+asyncpg://user:pass@localhost/db",
                 "OPENAI_API_KEY": "sk-..."

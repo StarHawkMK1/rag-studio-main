@@ -21,7 +21,7 @@ from pypdf import PdfReader
 import docx
 import chardet
 
-from app.core.logger import logger
+from app.utils.logger import logger
 from app.schemas.opensearch import DocumentInput
 
 

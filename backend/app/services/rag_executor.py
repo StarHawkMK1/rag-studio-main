@@ -12,15 +12,15 @@ from typing import Dict, List, Optional, Any, Tuple
 from datetime import datetime
 from abc import ABC, abstractmethod
 
-from langchain.chat_models import ChatOpenAI
-from langchain.prompts import ChatPromptTemplate, PromptTemplate
-from langchain.schema import Document
+from langchain_community.chat_models import ChatOpenAI
+from langchain_core.prompts import ChatPromptTemplate, PromptTemplate
+from langchain_core.documents import Document
 from langchain.chains import RetrievalQA, LLMChain
-from langchain.retrievers.base import BaseRetriever
+from langchain_core.retrievers import BaseRetriever
 from langgraph.graph import StateGraph, END
 
 from app.core.config import settings
-from app.core.logger import logger
+from app.utils.logger import logger
 from app.services.opensearch_service import OpenSearchService
 from app.schemas.pipeline import (
     PipelineConfig, 

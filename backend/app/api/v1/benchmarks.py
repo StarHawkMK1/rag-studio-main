@@ -14,7 +14,7 @@ from fastapi.responses import FileResponse, StreamingResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 import io
 
-from app.core.logger import logger
+from app.utils.logger import logger
 from app.db.session import get_db
 from app.services.benchmark_service import benchmark_service
 from app.schemas.benchmark import (
@@ -26,7 +26,7 @@ from app.schemas.benchmark import (
     TestCaseUpload
 )
 from app.models.benchmark import Benchmark as BenchmarkModel
-from app.core.deps import get_current_user
+from app.core.dependencies import get_current_user
 
 # API 라우터 생성
 router = APIRouter(

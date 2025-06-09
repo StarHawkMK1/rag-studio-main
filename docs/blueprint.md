@@ -1,4 +1,4 @@
-# **App Name**: RAGPilot
+# **App Name**: RAGStudio
 
 ## Core Features:
 

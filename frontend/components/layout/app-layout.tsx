@@ -18,7 +18,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-8 h-8 text-primary">
               <path d="M12.378 1.602a.75.75 0 00-.756 0L3.366 6.026A.75.75 0 003 6.732V11.25a.75.75 0 00.75.75h8.25a.75.75 0 00.75-.75V6.732a.75.75 0 00-.366-.706L12.378 1.602zM12 7.518L15.922 5.25l3.922-2.25L12 7.518zM12 7.518L8.078 5.25 4.156 3 12 7.518zM11.25 12.75H3.75v5.518c0 .43.338.79.768.822A48.02 48.02 0 0012 19.5a48.02 48.02 0 007.482-.41c.43-.032.768-.392.768-.822V12.75H12.75v-1.5h8.25a.75.75 0 00.75-.75V6.732a.75.75 0 00-.366-.706l-3.54-2.042a.75.75 0 00-.9/.3l-2.68 4.643a.75.75 0 00.012.807l.12.207V11.25a.75.75 0 01-.75.75h-1.5V12.75z" />
             </svg>
-            <h1 className="text-2xl font-headline font-semibold">RAGPilot</h1>
+            <h1 className="text-2xl font-headline font-semibold">RAGStudio</h1>
           </Link>
         </SidebarHeader>
         <SidebarContent>

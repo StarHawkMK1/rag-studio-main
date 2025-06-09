@@ -12,7 +12,7 @@ import uuid
 from fastapi import APIRouter, HTTPException, Depends, status, BackgroundTasks
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.logger import logger
+from app.utils.logger import logger
 from app.db.session import get_db
 from app.services.rag_executor import pipeline_manager, PipelineConfig, PipelineType
 from app.schemas.pipeline import (
@@ -26,7 +26,7 @@ from app.schemas.pipeline import (
     PipelineStatus
 )
 from app.models.pipeline import Pipeline as PipelineModel
-from app.core.deps import get_current_user
+from app.core.dependencies import get_current_user
 
 # API 라우터 생성
 router = APIRouter(

@@ -1,1 +1,77 @@
+# Node.js / Frontend
 node_modules
+.next
+.next/
+next-dist/
+out/
+build/
+dist/
+.swc/
+*.tsbuildinfo
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Python / Backend
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+.pytest_cache/
+coverage/
+htmlcov/
+
+# Virtual Environments
+.venv/
+venv/
+ENV/
+.env
+.conda/
+
+# IDEs and editors
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Project specific
+.idx/
+.qodo/
+
+# Logs and databases
+*.log
+*.sqlite
+*.db
+
+# Docker
+.dockerignore
+docker-compose.override.yml
+docker-compose.override.yaml
+
+# Cache and temp files
+.cache/
+.temp/
+temp/
+tmp/

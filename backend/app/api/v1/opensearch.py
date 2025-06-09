@@ -12,7 +12,7 @@ from fastapi import APIRouter, HTTPException, Depends, status, UploadFile, File,
 from fastapi.responses import StreamingResponse
 import aiofiles
 
-from app.core.logger import logger
+from app.utils.logger import logger
 from app.services.opensearch_service import get_opensearch_service, OpenSearchService
 from app.schemas.opensearch import (
     ClusterHealth,

@@ -53,7 +53,7 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$t
 ;
 ;
 const metadata = {
-    title: 'RAGPilot',
+    title: 'RAGStudio',
     description: 'Comprehensive RAG Lifecycle Management Platform'
 };
 function RootLayout({ children }) {

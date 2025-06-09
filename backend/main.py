@@ -1,6 +1,6 @@
 # rag-studio/backend/main.py
 """
-RAGPilot 백엔드 메인 애플리케이션 파일
+RAGStudio 백엔드 메인 애플리케이션 파일
 
 이 파일은 FastAPI 애플리케이션의 진입점으로, 
 모든 라우터를 통합하고 미들웨어를 설정합니다.
@@ -18,18 +18,18 @@ from starlette.responses import Response
 
 from app.api.v1.router import api_router
 from app.core.config import settings
-from app.core.logger import logger
+from app.utils.logger import logger
 from app.db.session import engine
 from app.db.base import Base
 
 # Prometheus 메트릭 정의
 REQUEST_COUNT = Counter(
-    'ragpilot_requests_total', 
+    'ragstudio_requests_total', 
     'Total number of requests',
     ['method', 'endpoint', 'status']
 )
 REQUEST_DURATION = Histogram(
-    'ragpilot_request_duration_seconds',
+    'ragstudio_request_duration_seconds',
     'Request duration in seconds',
     ['method', 'endpoint']
 )
@@ -44,7 +44,7 @@ async def lifespan(app: FastAPI):
     종료 시: 리소스 정리
     """
     # 시작 시 실행
-    logger.info("🚀 RAGPilot 백엔드 서버를 시작합니다...")
+    logger.info("🚀 RAGStudio 백엔드 서버를 시작합니다...")
     
     # 데이터베이스 테이블 생성
     async with engine.begin() as conn:
@@ -55,7 +55,7 @@ async def lifespan(app: FastAPI):
     yield
     
     # 종료 시 실행
-    logger.info("🛑 RAGPilot 백엔드 서버를 종료합니다...")
+    logger.info("🛑 RAGStudio 백엔드 서버를 종료합니다...")
     await engine.dispose()
 
 

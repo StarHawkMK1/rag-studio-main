@@ -1,5 +1,4 @@
 {
-  "/ai-configurator/page": "app/ai-configurator/page.js",
   "/benchmarking/page": "app/benchmarking/page.js",
   "/favicon.ico/route": "app/favicon.ico/route.js",
   "/opensearch/page": "app/opensearch/page.js",

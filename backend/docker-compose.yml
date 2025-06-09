@@ -4,88 +4,141 @@ services:
   # PostgreSQL 데이터베이스 서비스
   postgres:
     image: postgres:16-alpine
-    container_name: ragpilot-postgres
+    container_name: ragstudio-postgres
     environment:
-      POSTGRES_USER: ragpilot
+      POSTGRES_USER: ragstudio
       POSTGRES_PASSWORD: password
-      POSTGRES_DB: ragpilot
+      POSTGRES_DB: ragstudio
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
-      - ragpilot-network
+      - ragstudio-network
 
   # Redis 캐시 및 메시지 브로커
   redis:
     image: redis:7-alpine
-    container_name: ragpilot-redis
+    container_name: ragstudio-redis
     ports:
       - "6379:6379"
     volumes:
       - redis_data:/data
     networks:
-      - ragpilot-network
+      - ragstudio-network
+      
+  # # Embedding service for OpenSearch
+  # embedding:
+  #   image: tomatoai-embedding
+  #   container_name: tomatoai-embedding
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         memory: 8G
+  #   #volumes:
+  #     #- ./tomatoai-embedding:/app/openSearchDcoker/tomatoai-embedding
+  #   ports:
+  #     - "12003:12003"
+  #   environment:
+  #     - PYTHONPATH=/app/openSearchDcoker/tomatoai-embedding
+  #     - TRANSFORMERS_CACHE=/app/openSearchDcoker/tomatoai-embedding/huggingface
+  #     - HF_HOME=/app/openSearchDcoker/tomatoai-embedding/huggingface
+  #     - TRANSFORMERS_OFFLINE=1
+  #     - HF_DATASETS_OFFLINE=1
+  #     - HF_EVALUATE_OFFLINE=1
+  #   networks:
+  #     - ragstudio-network
+  #     - opensearch-net
 
-  # OpenSearch 클러스터
-  opensearch:
-    image: opensearchproject/opensearch:2.11.0
-    container_name: ragpilot-opensearch
-    environment:
-      - cluster.name=ragpilot-cluster
-      - node.name=ragpilot-node
-      - discovery.type=single-node
-      - bootstrap.memory_lock=true
-      - "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m"
-      - "DISABLE_SECURITY_PLUGIN=true"  # 개발 환경용
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-    volumes:
-      - opensearch_data:/usr/share/opensearch/data
-    ports:
-      - "9200:9200"
-      - "9600:9600"
-    networks:
-      - ragpilot-network
+  # # OpenSearch 클러스터
+  # tomatoai-opensearch-node1:
+  #   image: opensearch-custom-plugin-3.0
+  #   container_name: tomatoai-opensearch-node1
+  #   depends_on:
+  #     - embedding    # embedding 서비스가 먼저 시작된 후 실행
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         cpus: 6.0
+  #         memory: 8G
+  #   environment:
+  #     - cluster.name=opensearch-cluster
+  #     - node.name=tomatoai-opensearch-node1
+  #     - discovery.seed_hosts=tomatoai-opensearch-node1
+  #     - cluster.initial_cluster_manager_nodes=tomatoai-opensearch-node1
+  #     - bootstrap.memory_lock=true
+  #     - "OPENSEARCH_JAVA_OPTS=-Xms4096m -Xmx4096m"
+  #     - OPENSEARCH_INITIAL_ADMIN_PASSWORD=Tomato80962
+  #     - path.repo=/usr/share/opensearch/data/backup
+  #   healthcheck:
+  #     # test: ["CMD", "curl", "https://localhost:9200","-ku","admin:Tomato80962"]
+  #     test: ["CMD-SHELL", "curl -k -u admin:Tomato80962 --silent --fail https://localhost:9200/_cluster/health | grep -E '\"status\":\"(yellow|green)\"' || exit 1"]
+  #     interval: 5s
+  #     timeout: 10s
+  #     retries: 100
+  #   ulimits:
+  #     memlock:
+  #       soft: -1
+  #       hard: -1
+  #     nofile:
+  #       soft: 65536
+  #       hard: 65536
+  #   volumes:
+  #     - ./data:/usr/share/opensearch/data
+  #     - ./data/backup:/usr/share/opensearch/data/backup
+  #     - ./config:/usr/share/opensearch/config
+  #   ports:
+  #     - "9200:9200"
+  #     - "9600:9600"
+  #   networks:
+  #     - ragstudio-network
+  #     - opensearch-net
 
-  # OpenSearch 대시보드
-  opensearch-dashboards:
-    image: opensearchproject/opensearch-dashboards:2.11.0
-    container_name: ragpilot-opensearch-dashboards
-    ports:
-      - "5601:5601"
-    environment:
-      - OPENSEARCH_HOSTS=http://opensearch:9200
-      - "DISABLE_SECURITY_DASHBOARDS_PLUGIN=true"  # 개발 환경용
-    networks:
-      - ragpilot-network
-    depends_on:
-      - opensearch
+  # # OpenSearch 대시보드
+  # opensearch-dashboards:
+  #   image: opensearchproject/opensearch-dashboards:3.0.0
+  #   container_name: opensearch-dashboards
+  #   depends_on:
+  #     tomatoai-opensearch-node1:
+  #       condition: service_healthy
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         cpus: 0.5
+  #         memory: 1G
+  #   ports:
+  #     - "5601:5601"
+  #   expose:
+  #     - "5601"
+  #   environment:
+  #     OPENSEARCH_HOSTS: '["https://tomatoai-opensearch-node1:9200"]'
+  #     #DISABLE_SECURITY_DASHBOARDS_PLUGIN: "true"  # 개발 환경에서만 사용
+  #     OPENSEARCH_SSL_VERIFICATIONMODE: "none"
+  #     OPENSEARCH_USERNAME: "admin"  # 기본 관리자 계정
+  #     OPENSEARCH_PASSWORD: "Tomato80962"  # tomatoai-opensearch-node1에 설정된 비밀번호
+  #   networks:
+  #     - ragstudio-network
+  #     - opensearch-net
 
   # FastAPI 백엔드 서비스
   backend:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: ragpilot-backend
+    container_name: ragstudio-backend
     ports:
       - "8000:8000"
     environment:
-      - DATABASE_URL=postgresql+asyncpg://ragpilot:password@postgres:5432/ragpilot
+      - DATABASE_URL=postgresql+asyncpg://ragstudio:password@postgres:5432/ragstudio
       - REDIS_URL=redis://redis:6379/0
-      - OPENSEARCH_HOST=opensearch
-      - OPENSEARCH_PORT=9200
     volumes:
       - ./app:/app/app
       - ./uploads:/app/uploads
     depends_on:
       - postgres
       - redis
-      - opensearch
     networks:
-      - ragpilot-network
+      - ragstudio-network
     command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
 
   # Celery 워커 서비스
@@ -93,20 +146,18 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: ragpilot-celery-worker
+    container_name: ragstudio-celery-worker
     environment:
-      - DATABASE_URL=postgresql+asyncpg://ragpilot:password@postgres:5432/ragpilot
+      - DATABASE_URL=postgresql+asyncpg://ragstudio:password@postgres:5432/ragstudio
       - REDIS_URL=redis://redis:6379/0
       - CELERY_BROKER_URL=redis://redis:6379/1
-      - OPENSEARCH_HOST=opensearch
     volumes:
       - ./app:/app/app
     depends_on:
       - postgres
       - redis
-      - opensearch
     networks:
-      - ragpilot-network
+      - ragstudio-network
     command: celery -A app.core.celery_app worker --loglevel=info
 
   # Celery Beat 스케줄러
@@ -114,9 +165,9 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: ragpilot-celery-beat
+    container_name: ragstudio-celery-beat
     environment:
-      - DATABASE_URL=postgresql+asyncpg://ragpilot:password@postgres:5432/ragpilot
+      - DATABASE_URL=postgresql+asyncpg://ragstudio:password@postgres:5432/ragstudio
       - REDIS_URL=redis://redis:6379/0
       - CELERY_BROKER_URL=redis://redis:6379/1
     volumes:
@@ -125,14 +176,15 @@ services:
       - postgres
       - redis
     networks:
-      - ragpilot-network
+      - ragstudio-network
     command: celery -A app.core.celery_app beat --loglevel=info
 
 networks:
-  ragpilot-network:
+  ragstudio-network:
+    driver: bridge
+  opensearch-net:
     driver: bridge
 
 volumes:
   postgres_data:
   redis_data:
-  opensearch_data:

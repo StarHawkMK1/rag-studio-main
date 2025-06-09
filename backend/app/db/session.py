@@ -11,7 +11,7 @@ from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sess
 from sqlalchemy.pool import NullPool
 
 from app.core.config import settings
-from app.core.logger import logger
+from app.utils.logger import logger
 
 # 비동기 엔진 생성
 engine = create_async_engine(
@@ -80,7 +80,7 @@ async def init_db():
                 
                 admin_user = User(
                     username="admin",
-                    email="admin@ragpilot.com",
+                    email="admin@ragstudio.com",
                     full_name="System Administrator",
                     hashed_password=get_password_hash("admin123!@#"),
                     is_active=True,

@@ -13,7 +13,7 @@ from datetime import datetime
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect, Depends, Query
 from fastapi.exceptions import WebSocketException
 
-from app.core.logger import logger
+from app.utils.logger import logger
 from app.core.security import verify_token
 
 router = APIRouter()

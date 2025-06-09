@@ -18,6 +18,7 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  distDir: 'frontend/.next',
 };
 
 export default nextConfig;

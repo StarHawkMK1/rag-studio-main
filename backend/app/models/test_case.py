@@ -20,7 +20,7 @@ class TestCase(Base, TimestampMixin):
     query = Column(Text, nullable=False)
     query_type = Column(String(50))  # factual, analytical, comparative, explanatory
     expected_answer = Column(Text, nullable=True)
-    metadata = Column(JSON, default={})
+    test_metadata = Column(JSON, default={})
     
     # 메타데이터
     created_by = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=True)

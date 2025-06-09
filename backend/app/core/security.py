@@ -12,7 +12,7 @@ from jose import jwt, JWTError
 from passlib.context import CryptContext
 
 from app.core.config import settings
-from app.core.logger import logger
+from app.utils.logger import logger
 
 # 비밀번호 해싱 컨텍스트
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")

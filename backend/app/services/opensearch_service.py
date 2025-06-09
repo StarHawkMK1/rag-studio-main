@@ -17,7 +17,7 @@ import numpy as np
 from sentence_transformers import SentenceTransformer
 
 from app.core.config import settings
-from app.core.logger import logger
+from app.utils.logger import logger
 from app.schemas.opensearch import (
     IndexConfig, 
     DocumentInput, 

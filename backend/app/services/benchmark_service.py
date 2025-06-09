@@ -15,7 +15,7 @@ import numpy as np
 from sklearn.metrics import precision_recall_fscore_support
 
 from app.core.config import settings
-from app.core.logger import logger
+from app.utils.logger import logger
 from app.services.rag_executor import pipeline_manager, PipelineConfig
 from app.schemas.benchmark import (
     BenchmarkConfig,

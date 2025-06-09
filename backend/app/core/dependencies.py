@@ -14,7 +14,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core import security
 from app.core.config import settings
-from app.core.logger import logger
+from app.utils.logger import logger
 from app.db.session import get_db
 from app.models.user import User
 from app.schemas.user import TokenPayload

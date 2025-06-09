@@ -14,9 +14,9 @@ from fastapi import APIRouter, HTTPException, Depends, status, Body
 from sqlalchemy.ext.asyncio import AsyncSession
 from pydantic import BaseModel, Field
 
-from app.core.logger import logger
+from app.utils.logger import logger
 from app.db.session import get_db
-from app.core.deps import get_current_user
+from app.core.dependencies import get_current_user
 from app.models.user import User
 
 router = APIRouter()

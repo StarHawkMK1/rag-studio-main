@@ -23,11 +23,11 @@ COPY . .
 RUN mkdir -p /app/uploads
 
 # 비루트 사용자 생성 및 권한 설정
-RUN useradd -m -u 1000 ragpilot && \
-    chown -R ragpilot:ragpilot /app
+RUN useradd -m -u 1000 ragstudio && \
+    chown -R ragstudio:ragstudio /app
 
 # 비루트 사용자로 전환
-USER ragpilot
+USER ragstudio
 
 # 포트 노출
 EXPOSE 8000
